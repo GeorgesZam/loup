@@ -39,7 +39,7 @@ def phase_voyante():
     voyante = [joueur for joueur, role in st.session_state.roles.items() if role == "Voyante"]
     
     if 'voyante_intro_done' not in st.session_state:
-        say("Le village se réveille.")
+        say("Le village se réveille. La voyante ouvre les yeux.")
         st.session_state.voyante_intro_done = True
     
     if voyante:
@@ -51,7 +51,7 @@ def phase_voyante():
             st.session_state.voyante_done = True
     
     if 'voyante_done' in st.session_state:
-        say("Le village se rendort.")
+        say("La voyante ferme les yeux. Le village se rendort.")
 
 # Phase du Loup Garou
 def phase_loup_garou():
@@ -71,7 +71,7 @@ def phase_loup_garou():
             st.session_state.loup_garou_done = True
     
     if 'loup_garou_done' in st.session_state:
-        say("Le loup-garou se rendort.")
+        say("Le loup-garou ferme les yeux. Le village se rendort.")
 
 # Phase de Vote des Villageois
 def phase_villageois():
