@@ -15,7 +15,7 @@ for joueur in joueurs:
     roles[joueur] = role
     roles_disponibles.remove(role)
 
-# Fonction pour la synthèse vocale
+# Fonction pour la synthèse vocale (utilisée seulement pour d'autres actions que l'annonce des rôles)
 def say(text):
     components.html(f"""
         <script type="text/javascript">
@@ -31,7 +31,6 @@ st.header("Rôles des joueurs")
 for joueur, role in roles.items():
     with st.expander(f"Voir le rôle de {joueur}"):
         st.write(f"{joueur} est {role}.")
-        say(f"{joueur} est {role}.")
 
 # Fonction pour gérer le choix du loup-garou
 def choisir_victime():
