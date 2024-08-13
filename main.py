@@ -37,19 +37,28 @@ def afficher_roles():
 def phase_voyante():
     st.header("Phase de la Voyante")
     voyante = [joueur for joueur, role in st.session_state.roles.items() if role == "Voyante"]
-    say("le vilage se réveille")
+    
+    if 'voyante_intro_done' not in st.session_state:
+        say("Le village se réveille.")
+        st.session_state.voyante_intro_done = True
+    
     if voyante:
         voyante = voyante[0]
         victime = st.selectbox(f"{voyante}, choisissez un joueur à sonder:", [j for j in st.session_state.roles.keys() if j != voyante])
         if st.button("Révéler le rôle"):
             st.write(f"Le rôle de {victime} est {st.session_state.roles[victime]}.")
-    else:
-        st.write("Il n'y a pas de Voyante dans cette partie.")
-    say("le village se rendort")
+            say(f"Le rôle de {victime} est {st.session_state.roles[victime]}.")
+            st.session_state.voyante_done = True
+    
+    if 'voyante_done' in st.session_state:
+        say("Le village se rendort.")
 
 # Phase du Loup Garou
 def phase_loup_garou():
-    say("le loup garou se réveille")
+    if 'loup_garou_intro_done' not in st.session_state:
+        say("Le loup-garou se réveille.")
+        st.session_state.loup_garou_intro_done = True
+    
     st.header("Phase du Loup Garou")
     loup_garou = [joueur for joueur, role in st.session_state.roles.items() if role == "Loup Garou"]
     if loup_garou:
@@ -59,18 +68,24 @@ def phase_loup_garou():
             st.write(f"{victime} a été tué(e). Son rôle était {st.session_state.roles[victime]}.")
             say(f"{victime} a été tué(e). Son rôle était {st.session_state.roles[victime]}.")
             del st.session_state.roles[victime]  # Supprime le joueur mort
-    else:
-        st.write("Il n'y a pas de Loup Garou dans cette partie.")
-    say("le loup garou se rendort ")
+            st.session_state.loup_garou_done = True
+    
+    if 'loup_garou_done' in st.session_state:
+        say("Le loup-garou se rendort.")
 
 # Phase de Vote des Villageois
 def phase_villageois():
+    if 'villageois_intro_done' not in st.session_state:
+        say("Le village se réveille pour le vote.")
+        st.session_state.villageois_intro_done = True
+    
     st.header("Phase du Vote des Villageois")
     vote = st.selectbox("Villageois, choisissez un joueur à éliminer:", [j for j in st.session_state.roles.keys()])
     if st.button("Confirmer l'élimination"):
         st.write(f"{vote} a été éliminé(e). Son rôle était {st.session_state.roles[vote]}.")
         say(f"{vote} a été éliminé(e). Son rôle était {st.session_state.roles[vote]}.")
         del st.session_state.roles[vote]  # Supprime le joueur éliminé
+        st.session_state.villageois_done = True
 
 # Vérification des conditions de fin de partie
 def verifier_fin_partie():
@@ -100,6 +115,11 @@ afficher_roles()
 if not verifier_fin_partie():
     phases[st.session_state.phase]()
     if st.button("Passer à la phase suivante"):
+        # Réinitialiser les états de la phase précédente
+        for key in ['voyante_intro_done', 'voyante_done', 'loup_garou_intro_done', 'loup_garou_done', 'villageois_intro_done', 'villageois_done']:
+            if key in st.session_state:
+                del st.session_state[key]
+        
         st.session_state.phase = (st.session_state.phase + 1) % len(phases)
 
 if verifier_fin_partie():
