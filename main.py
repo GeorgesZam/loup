@@ -1,17 +1,18 @@
 import streamlit as st
-
-def say(text):
-    st.markdown(f"""
-        <script>
-            var utterance = new SpeechSynthesisUtterance("{text}");
-            window.speechSynthesis.speak(utterance);
-        </script>
-    """, unsafe_allow_html=True)
+import streamlit.components.v1 as components
 
 st.title("Synthèse Vocale dans Streamlit")
 
-# Exemple de texte à dire
+# Texte à dire
 texte_a_dire = st.text_input("Entrez le texte à dire", "Bonjour, bienvenue sur notre application!")
 
+# Bouton pour déclencher la parole
 if st.button("Dire le texte"):
-    say(texte_a_dire)
+    # Code HTML et JavaScript pour déclencher la synthèse vocale
+    components.html(f"""
+        <script type="text/javascript">
+            var utterance = new SpeechSynthesisUtterance("{texte_a_dire}");
+            window.speechSynthesis.speak(utterance);
+        </script>
+    """)
+
