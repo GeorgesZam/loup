@@ -62,23 +62,12 @@ def phase_loup_garou():
     st.header("Phase du Loup Garou")
     loups_garous = [joueur for joueur, role in st.session_state.roles.items() if role == "Loup Garou"]
     if loups_garous:
-        victime = st.selectbox(f"{', '.join(loups_garous)}, choisissez votre victime:", [j for j in st.session_state.roles.keys() if j not in loups_garous])
-        if st.button("Confirmer la victime"):
-            st.write(f"{victime} a été tué(e). Son rôle était {st.session_state.roles[victime]}.")
-            say(f"{victime} a été tué(e). Son rôle était {st.session_state.roles[victime]}.")
-            del st.session_state.roles[victime]  # Supprime le joueur mort
-            st.session_state.loup_garou_done = True
-    
-    if 'loup_garou_done' in st.session_state:
-        say("Le loup-garou ferme les yeux. Le village se rendort.")
-
-    
-    st.header("Phase du Loup Garou")
-    loup_garou = [joueur for joueur, role in st.session_state.roles.items() if role == "Loup Garou"]
-    if loup_garou:
-        loup_garou = loup_garou[0]
-        victime = st.selectbox(f"{loup_garou}, choisissez votre victime:", [j for j in st.session_state.roles.keys() if j != loup_garou])
-        if st.button("Confirmer la victime"):
+        victime = st.selectbox(
+            f"{', '.join(loups_garous)}, choisissez votre victime:", 
+            [j for j in st.session_state.roles.keys() if j not in loups_garous],
+            key=f"victime_select_{st.session_state.phase}"  # Utilisation d'une clé unique
+        )
+        if st.button("Confirmer la victime", key=f"confirmer_victime_{st.session_state.phase}"):
             st.write(f"{victime} a été tué(e). Son rôle était {st.session_state.roles[victime]}.")
             say(f"{victime} a été tué(e). Son rôle était {st.session_state.roles[victime]}.")
             del st.session_state.roles[victime]  # Supprime le joueur mort
