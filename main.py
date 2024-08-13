@@ -32,3 +32,6 @@ def afficher_roles():
     for joueur, role in st.session_state.roles.items():
         with st.expander(f"Voir le rôle de {joueur}"):
             st.write(f"{joueur} est {role}.")
+
+
+afficher_roles()
