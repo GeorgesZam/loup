@@ -6,7 +6,7 @@ import streamlit.components.v1 as components
 joueurs = ["Georges", "Cécile", "Isabelle", "Alix"]
 
 # Liste des rôles disponibles (1 rôle par joueur)
-roles_disponibles = ["Loup Garou", "Sorcière", "Voyante", "Villageois"]
+roles_disponibles = ["Loup Garou", "Villageois", "Voyante", "Villageois"]
 
 # Attribution des rôles de manière aléatoire
 if 'roles' not in st.session_state:
@@ -44,8 +44,8 @@ def phase_voyante():
     
     if voyante:
         voyante = voyante[0]
-        victime = st.selectbox(f"{voyante}, choisissez un joueur à sonder:", [j for j in st.session_state.roles.keys() if j != voyante])
-        if st.button("Révéler le rôle"):
+        victime = st.selectbox(f"{voyante}, choisissez un joueur à sonder:", [j for j in st.session_state.roles.keys() if j != voyante], key=f"voyante_select_{st.session_state.phase}")
+        if st.button("Révéler le rôle", key=f"reveler_voyante_{st.session_state.phase}"):
             st.write(f"Le rôle de {victime} est {st.session_state.roles[victime]}.")
             say(f"Le rôle de {victime} est {st.session_state.roles[victime]}.")
             st.session_state.voyante_done = True
@@ -83,8 +83,8 @@ def phase_villageois():
         st.session_state.villageois_intro_done = True
     
     st.header("Phase du Vote des Villageois")
-    vote = st.selectbox("Villageois, choisissez un joueur à éliminer:", [j for j in st.session_state.roles.keys()])
-    if st.button("Confirmer l'élimination"):
+    vote = st.selectbox("Villageois, choisissez un joueur à éliminer:", [j for j in st.session_state.roles.keys()], key=f"vote_village_{st.session_state.phase}")
+    if st.button("Confirmer l'élimination", key=f"eliminer_vote_{st.session_state.phase}"):
         st.write(f"{vote} a été éliminé(e). Son rôle était {st.session_state.roles[vote]}.")
         say(f"{vote} a été éliminé(e). Son rôle était {st.session_state.roles[vote]}.")
         del st.session_state.roles[vote]  # Supprime le joueur éliminé
