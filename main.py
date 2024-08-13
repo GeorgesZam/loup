@@ -29,8 +29,9 @@ st.title("Jeu de Loup Garou")
 st.header("Rôles des joueurs")
 
 for joueur, role in roles.items():
-    st.write(f"{joueur} est {role}.")
-    say(f"{joueur} est {role}.")
+    with st.expander(f"Voir le rôle de {joueur}"):
+        st.write(f"{joueur} est {role}.")
+        say(f"{joueur} est {role}.")
 
 # Fonction pour gérer le choix du loup-garou
 def choisir_victime():
