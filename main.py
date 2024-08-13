@@ -37,6 +37,7 @@ def afficher_roles():
 def phase_voyante():
     st.header("Phase de la Voyante")
     voyante = [joueur for joueur, role in st.session_state.roles.items() if role == "Voyante"]
+    say("le vilage se réveille")
     if voyante:
         voyante = voyante[0]
         victime = st.selectbox(f"{voyante}, choisissez un joueur à sonder:", [j for j in st.session_state.roles.keys() if j != voyante])
@@ -44,9 +45,11 @@ def phase_voyante():
             st.write(f"Le rôle de {victime} est {st.session_state.roles[victime]}.")
     else:
         st.write("Il n'y a pas de Voyante dans cette partie.")
+    say("le village se rendort")
 
 # Phase du Loup Garou
 def phase_loup_garou():
+    say("le loup garou se réveille")
     st.header("Phase du Loup Garou")
     loup_garou = [joueur for joueur, role in st.session_state.roles.items() if role == "Loup Garou"]
     if loup_garou:
@@ -58,6 +61,7 @@ def phase_loup_garou():
             del st.session_state.roles[victime]  # Supprime le joueur mort
     else:
         st.write("Il n'y a pas de Loup Garou dans cette partie.")
+    say("le loup garou se rendort ")
 
 # Phase de Vote des Villageois
 def phase_villageois():
