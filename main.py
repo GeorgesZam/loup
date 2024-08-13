@@ -26,6 +26,13 @@ def say(text):
         </script>
     """, height=0)
 
+# Afficher les rôles des joueurs restants
+def afficher_roles():
+    st.header("Rôles des joueurs restants")
+    for joueur, role in st.session_state.roles.items():
+        with st.expander(f"Voir le rôle de {joueur}"):
+            st.write(f"{joueur} est {role}.")
+
 # Phase de la Voyante
 def phase_voyante():
     st.header("Phase de la Voyante")
@@ -82,6 +89,9 @@ if 'phase' not in st.session_state:
     st.session_state.phase = 0
 
 phases = [phase_voyante, phase_loup_garou, phase_villageois]
+
+# Affichage des rôles avant chaque phase
+afficher_roles()
 
 if not verifier_fin_partie():
     phases[st.session_state.phase]()
