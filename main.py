@@ -15,7 +15,7 @@ for joueur in joueurs:
     roles[joueur] = role
     roles_disponibles.remove(role)
 
-# Fonction pour la synthèse vocale (utilisée seulement pour d'autres actions que l'annonce des rôles)
+# Fonction pour la synthèse vocale
 def say(text):
     components.html(f"""
         <script type="text/javascript">
@@ -24,31 +24,40 @@ def say(text):
         </script>
     """, height=0)
 
-# Affichage des rôles des joueurs dans l'interface Streamlit
-st.title("Jeu de Loup Garou")
-st.header("Rôles des joueurs")
+# Phase de la Voyante
+def phase_voyante():
+    st.header("Phase de la Voyante")
+    voyante = [joueur for joueur, role in roles.items() if role == "Voyante"]
+    if voyante:
+        voyante = voyante[0]
+        victime = st.selectbox(f"{voyante}, choisissez un joueur à sonder:", [j for j in roles.keys() if j != voyante])
+        if st.button("Révéler le rôle"):
+            st.write(f"Le rôle de {victime} est {roles[victime]}.")
+    else:
+        st.write("Il n'y a pas de Voyante dans cette partie.")
 
-for joueur, role in roles.items():
-    with st.expander(f"Voir le rôle de {joueur}"):
-        st.write(f"{joueur} est {role}.")
-
-# Fonction pour gérer le choix du loup-garou
-def choisir_victime():
-    victime = st.text_input("Loup Garou, entrez le nom de votre victime:")
-    if victime:
-        if victime in roles:
+# Phase du Loup Garou
+def phase_loup_garou():
+    st.header("Phase du Loup Garou")
+    loup_garou = [joueur for joueur, role in roles.items() if role == "Loup Garou"]
+    if loup_garou:
+        loup_garou = loup_garou[0]
+        victime = st.selectbox(f"{loup_garou}, choisissez votre victime:", [j for j in roles.keys() if j != loup_garou])
+        if st.button("Confirmer la victime"):
             st.write(f"{victime} a été tué(e). Son rôle était {roles[victime]}.")
             say(f"{victime} a été tué(e). Son rôle était {roles[victime]}.")
             del roles[victime]  # Supprime le joueur mort
-        else:
-            st.write("Ce joueur n'existe pas.")
-            say("Ce joueur n'existe pas.")
-    
-    return victime
+    else:
+        st.write("Il n'y a pas de Loup Garou dans cette partie.")
 
-# Interface pour la phase du loup-garou
-st.header("Phase du Loup Garou")
-victime = choisir_victime()
+# Phase de Vote des Villageois
+def phase_villageois():
+    st.header("Phase du Vote des Villageois")
+    vote = st.selectbox("Villageois, choisissez un joueur à éliminer:", [j for j in roles.keys()])
+    if st.button("Confirmer l'élimination"):
+        st.write(f"{vote} a été éliminé(e). Son rôle était {roles[vote]}.")
+        say(f"{vote} a été éliminé(e). Son rôle était {roles[vote]}.")
+        del roles[vote]  # Supprime le joueur éliminé
 
 # Vérification des conditions de fin de partie
 def verifier_fin_partie():
@@ -65,8 +74,20 @@ def verifier_fin_partie():
         return True
     return False
 
-# Vérification de la fin de la partie
+# Jeu principal
+st.title("Jeu de Loup Garou")
+if 'phase' not in st.session_state:
+    st.session_state.phase = 0
+
+if 'roles' not in st.session_state:
+    st.session_state.roles = roles
+
+phases = [phase_voyante, phase_loup_garou, phase_villageois]
+
+if not verifier_fin_partie():
+    phases[st.session_state.phase]()
+    if st.button("Passer à la phase suivante"):
+        st.session_state.phase = (st.session_state.phase + 1) % len(phases)
+
 if verifier_fin_partie():
     st.write("Fin du jeu.")
-else:
-    st.write("Le jeu continue.")
